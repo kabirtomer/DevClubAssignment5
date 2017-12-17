@@ -1,5 +1,25 @@
 #!/bin/bash
 
+nest_test(){
+    
+    local curr_dir=$(pwd)
+
+    cd "$1"
+    local dir1=$(pwd)
+
+    cd "$curr_dir"
+    cd "$2"
+    local dir2=$(pwd)
+
+    if [[ "$dir1" =~ "$dir2".+ ]] || [[ "$dir2" =~ "$dir1".+ ]]
+    then
+        echo "Nested directories cannot be backed up to each other"
+        exit 1
+    fi
+    cd "$curr_dir"
+}
+
+
 main(){
     
     IFS=$'\n' 
@@ -44,6 +64,8 @@ then
     echo "cannot open directory '$2': Permission denied"
     exit 1
 fi
+
+nest_test "$1" "$2"
 
 echo "Files copied from $1 to $2: "
 main "$1" "$2" ""
